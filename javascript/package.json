@@ -1,0 +1,38 @@
+{
+  "name": "appwrouter",
+  "version": "0.0.4",
+  "main": "dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "description": "A router for appwrite cloud functions",
+  "scripts": {
+    "build": "tsup",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "node",
+    "appwrite",
+    "router",
+    "appwrouter"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/moshOntong-IT/appwrouter/javascript/#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moshOntong-IT/appwrouter.git"
+  },
+  "bugs": "https://github.com/moshOntong-IT/appwrouter/issues",
+  "author": "Muslimin Ontong <moshontong@gmail.com>",
+  "devDependencies": {
+    "@types/bun": "^1.0.0",
+    "bun-plugin-dts": "^0.2.1",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "node-appwrite": "11.0.0",
+    "tsup": "^8.0.2"
+  }
+}

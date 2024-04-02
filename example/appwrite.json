@@ -1,0 +1,21 @@
+{
+  "projectId": "660b7f66f2b728c2ce5a",
+  "projectName": "appwrouter",
+  "functions": [
+    {
+      "$id": "660b87b3caf3da7ad6a5",
+      "name": "node_function",
+      "runtime": "bun-1.0",
+      "execute": ["any"],
+      "events": [],
+      "schedule": "",
+      "timeout": 15,
+      "enabled": true,
+      "logging": true,
+      "entrypoint": "src/main.ts",
+      "commands": "bun install",
+      "ignore": ["node_modules", ".npm"],
+      "path": "functions/node_function"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "compilerOptions": {
+    "downlevelIteration": true,
+    "types": ["bun-types"] // this is necessary
+  }
+}
