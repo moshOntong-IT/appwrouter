@@ -190,7 +190,9 @@ router.get("v1", "/", async ({ req, res, log, error, client }) => {
 It recommend to encapsulate the route handler logic in a separate function and pass it as a parameter to the route handler.
 
 ```typescript
-const handler = async ({ req, res, log, error, client }) => {
+import { RouteHandler } from "appwrouter";
+
+const handler: RouteHandler = async ({ req, res, log, error, client }) => {
   res.send("Hello World");
 };
 
