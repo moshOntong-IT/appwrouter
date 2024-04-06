@@ -244,7 +244,8 @@ class Appwrouter {
   }
 
   /// A method for initialization of the Appwrouter
-  Future<Function(dynamic)> initialize({
+  Future<dynamic> initialize(
+    dynamic context, {
     Future<dynamic> Function(
       AppwrouterRequest req,
       AppwrouterResponse res,
@@ -259,87 +260,85 @@ class Appwrouter {
       Object error,
     )? onError,
   }) async {
-    return (dynamic context) async {
-      final req = AppwrouterRequest.parse(context.req);
-      final res = AppwrouterResponse.parse(context.res);
-      final log = context.log;
-      final error = context.error;
-      try {
-        log('Initializing Appwrouter');
-        client = Client();
+    final req = AppwrouterRequest.parse(context.req);
+    final res = AppwrouterResponse.parse(context.res);
+    final log = context.log;
+    final error = context.error;
+    try {
+      log('Initializing Appwrouter');
+      client = Client();
 
-        if (onMiddleware == null) {
-          return await handleRequest(
+      if (onMiddleware == null) {
+        return await handleRequest(
+          req: req,
+          res: res,
+          log: log,
+          error: error,
+          client: client,
+        );
+      } else {
+        final triggeredType = TriggeredType.fromCode(
+          req.headers['x-appwrite-trigger'] as String,
+        );
+        String? fullEventType;
+        EventType? eventType;
+        Map<String, dynamic>? eventMap;
+
+        if (triggeredType == TriggeredType.event) {
+          fullEventType = req.headers['x-appwrite-event'] as String;
+          eventType = EventType.fromCode(fullEventType);
+          eventMap = req.body as Map<String, dynamic>;
+        }
+
+        final middlewarePayload = MiddlewarePayload(
+          method: MethodType.fromCode(req.method),
+          triggeredType: triggeredType,
+          eventType: eventType,
+          eventMap: eventMap,
+        );
+        Future<dynamic> redirect(String path) async {
+          return handleRequest(
+            req: req.copyWith(path: path),
+            res: res,
+            log: log,
+            error: error,
+            client: client,
+          );
+        }
+
+        Future<dynamic> next() async {
+          return handleRequest(
             req: req,
             res: res,
             log: log,
             error: error,
             client: client,
           );
-        } else {
-          final triggeredType = TriggeredType.fromCode(
-            req.headers['x-appwrite-trigger'] as String,
-          );
-          String? fullEventType;
-          EventType? eventType;
-          Map<String, dynamic>? eventMap;
-
-          if (triggeredType == TriggeredType.event) {
-            fullEventType = req.headers['x-appwrite-event'] as String;
-            eventType = EventType.fromCode(fullEventType);
-            eventMap = req.body as Map<String, dynamic>;
-          }
-
-          final middlewarePayload = MiddlewarePayload(
-            method: MethodType.fromCode(req.method),
-            triggeredType: triggeredType,
-            eventType: eventType,
-            eventMap: eventMap,
-          );
-          Future<dynamic> redirect(String path) async {
-            return handleRequest(
-              req: req.copyWith(path: path),
-              res: res,
-              log: log,
-              error: error,
-              client: client,
-            );
-          }
-
-          Future<dynamic> next() async {
-            return handleRequest(
-              req: req,
-              res: res,
-              log: log,
-              error: error,
-              client: client,
-            );
-          }
-
-          return await onMiddleware(
-            req,
-            res,
-            middlewarePayload,
-            client,
-            redirect,
-            next,
-          );
         }
-      } catch (e) {
-        if (onError == null) {
-          error(e.toString());
-          return res.send(
-              jsonEncode({
-                'message': 'Internal Server Error',
-              }),
-              500,
-              {
-                'content-type': 'application/json',
-              });
-        } else {
-          return onError(req, res, e);
-        }
+
+        return await onMiddleware(
+          req,
+          res,
+          middlewarePayload,
+          client,
+          redirect,
+          next,
+        );
       }
-    };
+    } catch (e) {
+      if (onError == null) {
+        error(e.toString());
+        return res.send(
+            jsonEncode({
+              'message': 'Internal Server Error',
+            }),
+            500,
+            {
+              'content-type': 'application/json',
+            });
+      } else {
+        return onError(req, res, e);
+      }
+    }
   }
 }

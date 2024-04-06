@@ -5,7 +5,7 @@ import 'package:appwrouter/appwrouter.dart';
 import 'package:dart_appwrite/dart_appwrite.dart';
 
 export 'src/appwrouter.dart';
-export 'src/initialize.dart';
+
 export 'src/models/models.dart';
 export 'src/utils/utils.dart';
 

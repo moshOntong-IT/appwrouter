@@ -3,13 +3,13 @@ import 'dart:convert';
 import 'package:appwrouter/appwrouter.dart';
 import 'package:dart_appwrite/dart_appwrite.dart';
 
-Future<dynamic> withParamsHandler(HandleRequest handler) async {
-  final HandleRequest(
-    :req,
-    :res,
-    :error,
-    :log,
-  ) = handler;
+Future<dynamic> withParamsHandler({
+  required AppwrouterRequest req,
+  required AppwrouterResponse res,
+  required dynamic log,
+  required dynamic error,
+  required Client client,
+}) async {
   try {
     final params = req.params;
     log("Hi Appwriters, this is a log message");

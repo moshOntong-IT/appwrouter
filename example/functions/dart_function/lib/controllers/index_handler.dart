@@ -3,12 +3,13 @@ import 'dart:convert';
 import 'package:appwrouter/appwrouter.dart';
 import 'package:dart_appwrite/dart_appwrite.dart';
 
-Future<dynamic> indexHandler(HandleRequest handler) async {
-  final HandleRequest(
-    :res,
-    :error,
-    :log,
-  ) = handler;
+Future<dynamic> indexHandler({
+  required AppwrouterRequest req,
+  required AppwrouterResponse res,
+  required dynamic log,
+  required dynamic error,
+  required Client client,
+}) async {
   try {
     log("Hi Appwriters, this is a log message");
     return res.send(
