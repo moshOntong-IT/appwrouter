@@ -5,6 +5,7 @@ environment:
   sdk: ^3.0.0
 
 dependencies:
+  appwrouter: ^0.1.0+1
   dart_appwrite: 8.0.0
 
 dev_dependencies:

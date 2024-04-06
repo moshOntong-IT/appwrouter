@@ -3,8 +3,6 @@
 import 'dart:convert';
 
 import 'package:appwrouter/appwrouter.dart';
-import 'package:appwrouter/src/models/src/handle_request.dart';
-import 'package:appwrouter/src/models/src/method_type.dart';
 
 /// {@template appwrouter}
 /// A router for appwrite cloud functions
@@ -16,6 +14,9 @@ class Appwrouter {
     return _instance;
   }
   Appwrouter._internal();
+
+  /// Singleton instance of the router
+  static Appwrouter get instance => _instance;
 
   /// Registration of all versions, routes and handlers
   Map<String, VersionedRoutes> versions = {};
