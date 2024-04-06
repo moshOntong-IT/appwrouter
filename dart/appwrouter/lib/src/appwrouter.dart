@@ -389,6 +389,9 @@ This error occured because you did not get the Response object from `AppwrouterR
   }
 
   Future<dynamic> _redirect(String path) async {
+    _req = _req!.copyWith(
+      path: path,
+    );
     final routeMatch = _matchRoute();
     return _handleRequest(routeMatch: routeMatch);
   }
