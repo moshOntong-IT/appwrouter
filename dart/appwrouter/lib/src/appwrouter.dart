@@ -139,7 +139,7 @@ class Appwrouter {
       _req!.method.toUpperCase(),
     );
     final path = '/${pathSegments.sublist(2).join('/')}';
-
+    _log(path);
     final versionRoutes = versions[version];
     if (versionRoutes == null) {
       // ignore: lines_longer_than_80_chars
