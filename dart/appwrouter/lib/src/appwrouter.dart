@@ -258,6 +258,7 @@ class Appwrouter {
     Future<dynamic> Function(
       AppwrouterRequest req,
       AppwrouterResponse res,
+      dynamic errorLog,
       Object error,
     )? onError,
   }) async {
@@ -337,6 +338,7 @@ use `return await redirect('/v1/path'). If the error is still there, please rais
 https://github.com/moshOntong-IT/appwrouter/issues
 ''');
         } else {
+          log('Called here');
           return onMiddlewareResponse;
         }
       }
@@ -352,7 +354,7 @@ https://github.com/moshOntong-IT/appwrouter/issues
               'content-type': 'application/json',
             });
       } else {
-        return onError(req, res, e);
+        return onError(req, res, error, e);
       }
     }
   }

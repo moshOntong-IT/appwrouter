@@ -22,6 +22,7 @@ Future<dynamic> main(final context) => router.initialize(
         return next();
       },
       onError: (req, res, error) {
+        error("Error while handling request: $error");
         return res.send(
           error.toString(),
           500,
