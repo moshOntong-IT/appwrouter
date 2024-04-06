@@ -126,15 +126,32 @@ class Appwrouter {
   }
 
   /// A function to match the route
-  RouteMatchHandler? matchRoute({
-    required String version,
-    required MethodType method,
-    required String path,
-  }) {
-    final versionRoutes = versions[version];
-    if (versionRoutes == null) return null;
+  RouteMatchHandler _matchRoute() {
+    final pathRequest = _req.path;
+    final pathSegments = pathRequest.split('/');
+    if (pathSegments.length < 2) {
+      _errorLog('Bad request');
+      throw Exception('Bad request');
+    }
 
+    final version = pathSegments[1];
+    final method = MethodType.fromCode(
+      _req.method.toUpperCase(),
+    );
+    final path = '/${pathSegments.sublist(2).join('/')}';
+
+    final versionRoutes = versions[version];
+    if (versionRoutes == null) {
+      // ignore: lines_longer_than_80_chars
+      _errorLog('The version indicate does not exist on registration');
+      throw Exception(
+        // ignore: lines_longer_than_80_chars
+        'The requested endpoint version could not be found. Please ensure that the specified version exists and is correctly configured in your application.',
+      );
+    }
+    late Map<String, dynamic> params;
     for (final MapEntry(:key, :value) in versionRoutes.routes.entries) {
+      params = <String, dynamic>{};
       if (value.methods[method] != null) {
         final routePattern = key
             .split('/')
@@ -149,9 +166,17 @@ class Appwrouter {
             )
             .toList();
 
-        if (routePattern.length != pathSegments.length) return null;
+        if (routePattern.length != pathSegments.length) {
+          _errorLog(
+            // ignore: lines_longer_than_80_chars
+            'The number of segments in the route pattern does not match the number of segments in the provided path. Please ensure they align.',
+          );
+          throw Exception(
+            // ignore: lines_longer_than_80_chars
+            'The requested URL does not match any of our routes. Please check the URL and try again.',
+          );
+        }
 
-        final params = <String, dynamic>{};
         var isMatch = true;
         for (var i = 0; i < routePattern.length; i++) {
           if (routePattern[i].startsWith(':')) {
@@ -167,6 +192,9 @@ class Appwrouter {
 
           if (handler != null) {
             return RouteMatchHandler(
+              path: path,
+              version: version,
+              method: method,
               params: params,
               handler: handler,
             );
@@ -175,52 +203,28 @@ class Appwrouter {
       }
     }
 
-    return null;
-  }
-
-  // TODO: add a method to generate the path parameters
-  /// A function to handle the request
-  Future<dynamic> handleRequest({
-    required AppwrouterRequest req,
-    required AppwrouterResponse res,
-    required dynamic log,
-    required dynamic error,
-    required Client client,
-  }) async {
-    final pathRequest = req.path;
-    final pathSegments = pathRequest.split('/');
-    if (pathSegments.length < 2) {
-      error('Bad request');
-      return res.send(
-          jsonEncode(
-            {'message': 'Bad request'},
-          ),
-          400,
-          {
-            'content-type': 'application/json',
-          });
-    }
-
-    final version = pathSegments[1];
-    final method = MethodType.fromCode(
-      req.method.toUpperCase(),
-    );
-    final path = '/${pathSegments.sublist(2).join('/')}';
-
-    final matchedRoute = matchRoute(
+    return RouteMatchHandler(
+      path: path,
       version: version,
       method: method,
-      path: path,
+      params: params,
     );
+  }
 
-    if (matchedRoute == null) {
-      error('No route found for $path with method $method');
-      return res.send(
+  Future<dynamic> _handleRequest({
+    required RouteMatchHandler routeMatch,
+  }) async {
+    if (routeMatch.handler == null) {
+      _errorLog(
+        // ignore: lines_longer_than_80_chars
+        'No route found for ${routeMatch.path} with method ${routeMatch.method}',
+      );
+      return _res.send(
           jsonEncode(
             {
               'message':
                   // ignore: lines_longer_than_80_chars
-                  'The requested endpoint $path was not found for API version $version.',
+                  'The requested endpoint ${routeMatch.path} was not found for API version ${routeMatch.method}.',
             },
           ),
           404,
@@ -229,21 +233,21 @@ class Appwrouter {
           });
     }
 
-    log('Matched route: $pathRequest with method $method');
+    _log('Matched route: ${_req.path} with method ${_req.method}');
 
     try {
-      final newReq = req.copyWith(params: matchedRoute.params);
+      final newReq = _req.copyWith(params: routeMatch.params);
 
-      return await matchedRoute.handler(
+      return await routeMatch.handler!(
         req: newReq,
-        res: res,
-        log: log,
-        error: error,
-        client: client,
+        res: _res,
+        log: _log,
+        error: _errorLog,
+        client: _client,
       );
     } catch (e) {
-      error('Error while handling request: $e');
-      return res.send(
+      _errorLog('Error while handling request: $e');
+      return _res.send(
           jsonEncode(
             {
               'message': 'Internal server error',
@@ -286,12 +290,9 @@ class Appwrouter {
       _errorLog = error;
 
       if (onMiddleware == null) {
-        return await handleRequest(
-          req: req,
-          res: res,
-          log: log,
-          error: error,
-          client: _client,
+        final routeMatch = _matchRoute();
+        return await _handleRequest(
+          routeMatch: routeMatch,
         );
       } else {
         final triggeredType = TriggeredType.fromCode(
@@ -356,22 +357,12 @@ This error occured because you did not get the Response object from `AppwrouterR
   }
 
   Future<dynamic> _redirect(String path) async {
-    return handleRequest(
-      req: _req.copyWith(path: path),
-      res: _res,
-      log: _log,
-      error: _errorLog,
-      client: _client,
-    );
+    final routeMatch = _matchRoute();
+    return _handleRequest(routeMatch: routeMatch);
   }
 
   Future<dynamic> _next() async {
-    return handleRequest(
-      req: _req,
-      res: _res,
-      log: _log,
-      error: _errorLog,
-      client: _client,
-    );
+    final routeMatch = _matchRoute();
+    return _handleRequest(routeMatch: routeMatch);
   }
 }

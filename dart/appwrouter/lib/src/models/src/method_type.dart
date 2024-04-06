@@ -43,4 +43,7 @@ enum MethodType {
         throw ArgumentError('Invalid method: $method');
     }
   }
+
+  @override
+  String toString() => code;
 }
