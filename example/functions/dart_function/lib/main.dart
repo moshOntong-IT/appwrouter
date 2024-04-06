@@ -23,12 +23,12 @@ Future<dynamic> main(final context) => router.initialize(
         return await next();
       },
       onError: (req, res, errorLog, error) {
-        errorLog("Error while handling request: $error");
+        errorLog("$error");
         return res.send(
           jsonEncode(
             error.toString(),
           ),
-          404,
+          error is AppwrouterException ? error.status : 500,
           {
             "content-type": "application/json",
           },

@@ -279,7 +279,7 @@ class Appwrouter {
       AppwrouterRequest req,
       AppwrouterResponse res,
       dynamic errorLog,
-      Object error,
+      AppwrouterException error,
     )? onError,
   }) async {
     final req = AppwrouterRequest.parse(context.req);
@@ -374,7 +374,15 @@ This error occured because you did not get the Response object from `AppwrouterR
               'content-type': 'application/json',
             });
       } else {
-        return onError(req, res, error, e);
+        return onError(
+          req,
+          res,
+          error,
+          AppwrouterException(
+            message: e.toString(),
+            status: 500,
+          ),
+        );
       }
     }
   }
