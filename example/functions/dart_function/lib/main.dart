@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:appwrouter/appwrouter.dart';
 import 'package:starter_template/controllers/index_handler.dart';
@@ -24,7 +25,9 @@ Future<dynamic> main(final context) => router.initialize(
       onError: (req, res, errorLog, error) {
         errorLog("Error while handling request: $error");
         return res.send(
-          error.toString(),
+          jsonEncode(
+            error.toString(),
+          ),
           500,
           {
             "content-type": "application/json",

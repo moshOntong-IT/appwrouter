@@ -289,6 +289,8 @@ class Appwrouter {
       _log = log;
       _errorLog = error;
 
+      _log('Initializing appwrouter...');
+
       if (onMiddleware == null) {
         final routeMatch = _matchRoute();
         return await _handleRequest(
@@ -344,7 +346,7 @@ This error occured because you did not get the Response object from `AppwrouterR
         error(e.toString());
         return res.send(
             jsonEncode({
-              'message': 'Internal Server Error',
+              'message': error.toString(),
             }),
             500,
             {
