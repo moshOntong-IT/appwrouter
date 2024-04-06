@@ -20,8 +20,14 @@ final router = Appwrouter.instance
 Future<dynamic> main(final context) => router.initialize(
       context,
       onMiddleware: (req, res, payload, log, error, redirect, next) async {
-        log(req.params);
-        return redirect('/v1/index');
+        final studentId = req.params["studentId"] as String?;
+        final passwordQuery = req.query["password"] as String?;
+
+        if (studentId == "123" && passwordQuery == "123") {
+          return redirect('/v1/index');
+        } else {
+          return next();
+        }
       },
       onError: (req, res, errorLog, error) {
         errorLog("$error");
