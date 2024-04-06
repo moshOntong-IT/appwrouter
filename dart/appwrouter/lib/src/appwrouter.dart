@@ -297,6 +297,8 @@ class Appwrouter {
           eventType: eventType,
           eventMap: eventMap,
         );
+
+        log('Middleware payload: $middlewarePayload');
         Future<dynamic> redirect(String path) async {
           return handleRequest(
             req: req.copyWith(path: path),
@@ -307,6 +309,7 @@ class Appwrouter {
           );
         }
 
+        log('My below is next');
         Future<dynamic> next() async {
           return handleRequest(
             req: req,
