@@ -144,9 +144,11 @@ class Appwrouter {
     if (versionRoutes == null) {
       // ignore: lines_longer_than_80_chars
       _errorLog('The version indicate does not exist on registration');
-      throw Exception(
-        // ignore: lines_longer_than_80_chars
-        'The requested endpoint version could not be found. Please ensure that the specified version exists and is correctly configured in your application.',
+      throw const AppwrouterException(
+        message:
+            // ignore: lines_longer_than_80_chars
+            'The requested endpoint version could not be found. Please ensure that the specified version exists and is correctly configured in your application.',
+        status: 400,
       );
     }
     late Map<String, dynamic> params;
@@ -171,9 +173,11 @@ class Appwrouter {
             // ignore: lines_longer_than_80_chars
             'The number of segments in the route pattern does not match the number of segments in the provided path. Please ensure they align.',
           );
-          throw Exception(
-            // ignore: lines_longer_than_80_chars
-            'The requested URL does not match any of our routes. Please check the URL and try again.',
+          throw const AppwrouterException(
+            message:
+                // ignore: lines_longer_than_80_chars
+                'The requested URL does not match any of our routes. Please check the URL and try again.',
+            status: 400,
           );
         }
 
@@ -329,17 +333,34 @@ class Appwrouter {
         );
 
         if (onMiddlewareResponse is! Future<dynamic>) {
-          throw Exception('''
+          throw AppwrouterException(
+            message: '''
 The onMiddleware function should return a Future<dynamic> but got ${onMiddlewareResponse.runtimeType}
 To fix this, use the next as a `return await next();`. If you use the redirect then,
 use `return await redirect('/v1/path'). If the error is still there, please raise an issue at
 https://github.com/moshOntong-IT/appwrouter/issues.
 
 This error occured because you did not get the Response object from `AppwrouterResponse`.
-''');
+''',
+            status: 500,
+          );
         } else {
           return onMiddlewareResponse;
         }
+      }
+    } on AppwrouterException catch (e) {
+      if (onError == null) {
+        error(e.message);
+        return res.send(
+            jsonEncode({
+              'message': e.message,
+            }),
+            e.status,
+            {
+              'content-type': 'application/json',
+            });
+      } else {
+        return onError(req, res, error, e);
       }
     } catch (e) {
       if (onError == null) {

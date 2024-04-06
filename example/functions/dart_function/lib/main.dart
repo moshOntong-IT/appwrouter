@@ -28,7 +28,7 @@ Future<dynamic> main(final context) => router.initialize(
           jsonEncode(
             error.toString(),
           ),
-          500,
+          404,
           {
             "content-type": "application/json",
           },
