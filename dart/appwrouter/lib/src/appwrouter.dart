@@ -1,8 +1,10 @@
-// ignore_for_file: avoid_dynamic_calls
+// ignore: lines_longer_than_80_chars
+// ignore_for_file: avoid_dynamic_calls, inference_failure_on_function_return_type
 
 import 'dart:convert';
 
 import 'package:appwrouter/appwrouter.dart';
+import 'package:dart_appwrite/dart_appwrite.dart';
 
 /// {@template appwrouter}
 /// A router for appwrite cloud functions
@@ -37,6 +39,9 @@ class Appwrouter {
     }
     versions[version]!.routes[path]!.methods[method] = handler;
   }
+
+  /// A Client instance from Appwrite SDK
+  late final Client client;
 
   /// GET registration method
   void get({
@@ -163,15 +168,12 @@ class Appwrouter {
 
   /// A function to handle the request
   Future<dynamic> handleRequest({
-    required HandleRequest handlerequest,
+    required AppwrouterRequest req,
+    required AppwrouterResponse res,
+    required dynamic log,
+    required dynamic error,
+    required Client client,
   }) async {
-    final HandleRequest(
-      :req,
-      :res,
-      :log,
-      :error,
-      :client,
-    ) = handlerequest;
     final pathRequest = req.path;
     final pathSegments = pathRequest.split('/');
     if (pathSegments.length < 2) {
@@ -220,13 +222,11 @@ class Appwrouter {
       final newReq = req.copyWith(params: matchedRoute.params);
 
       return await matchedRoute.handler(
-        HandleRequest(
-          req: newReq,
-          res: res,
-          log: log,
-          error: error,
-          client: client,
-        ),
+        req: newReq,
+        res: res,
+        log: log,
+        error: error,
+        client: client,
       );
     } catch (e) {
       error('Error while handling request: $e');
@@ -241,5 +241,105 @@ class Appwrouter {
             'content-type': 'application/json',
           });
     }
+  }
+
+  /// A method for initialization of the Appwrouter
+  Future<Function(dynamic)> initialize({
+    Future<dynamic> Function(
+      AppwrouterRequest req,
+      AppwrouterResponse res,
+      MiddlewarePayload payload,
+      Client client,
+      Future<dynamic> Function(String path) redirect,
+      Future<dynamic> Function() next,
+    )? onMiddleware,
+    Future<dynamic> Function(
+      AppwrouterRequest req,
+      AppwrouterResponse res,
+      Object error,
+    )? onError,
+  }) async {
+    return (dynamic context) async {
+      final req = AppwrouterRequest.parse(context.req);
+      final res = AppwrouterResponse.parse(context.res);
+      final log = context.log;
+      final error = context.error;
+      try {
+        log('Initializing Appwrouter');
+        client = Client();
+
+        if (onMiddleware == null) {
+          return await handleRequest(
+            req: req,
+            res: res,
+            log: log,
+            error: error,
+            client: client,
+          );
+        } else {
+          final triggeredType = TriggeredType.fromCode(
+            req.headers['x-appwrite-trigger'] as String,
+          );
+          String? fullEventType;
+          EventType? eventType;
+          Map<String, dynamic>? eventMap;
+
+          if (triggeredType == TriggeredType.event) {
+            fullEventType = req.headers['x-appwrite-event'] as String;
+            eventType = EventType.fromCode(fullEventType);
+            eventMap = req.body as Map<String, dynamic>;
+          }
+
+          final middlewarePayload = MiddlewarePayload(
+            method: MethodType.fromCode(req.method),
+            triggeredType: triggeredType,
+            eventType: eventType,
+            eventMap: eventMap,
+          );
+          Future<dynamic> redirect(String path) async {
+            return handleRequest(
+              req: req.copyWith(path: path),
+              res: res,
+              log: log,
+              error: error,
+              client: client,
+            );
+          }
+
+          Future<dynamic> next() async {
+            return handleRequest(
+              req: req,
+              res: res,
+              log: log,
+              error: error,
+              client: client,
+            );
+          }
+
+          return await onMiddleware(
+            req,
+            res,
+            middlewarePayload,
+            client,
+            redirect,
+            next,
+          );
+        }
+      } catch (e) {
+        if (onError == null) {
+          error(e.toString());
+          return res.send(
+              jsonEncode({
+                'message': 'Internal Server Error',
+              }),
+              500,
+              {
+                'content-type': 'application/json',
+              });
+        } else {
+          return onError(req, res, e);
+        }
+      }
+    };
   }
 }
