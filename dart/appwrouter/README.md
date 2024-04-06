@@ -49,154 +49,180 @@ Appwrite Cloud Functions does not have a built-in routing system. Appwrouter wil
 ## Installation
 
 ```bash
-npm install appwrouter
-```
-
-for yarn users:
-
-```bash
-yarn add appwrouter
-```
-
-for pnpm users:
-
-```bash
-pnpm add appwrouter
-```
-
-for bun users:
-
-```bash
-bun add appwrouter
+dart pub add appwrouter
 ```
 
 ## Usage
 
 1. First, create a new instance of Appwrouter. Then register your routes using the `get`, `post`, `put`, `patch` and `delete` methods.
 
-```typescript
-import { Appwrouter } from "appwrouter";
+```dart
+import 'package:appwrouter/appwrouter.dart';
 
-const router = new Appwrouter();
-
-router.get("v1", "/", async ({ req, res, log, error, client }) => {
-  res.send("Hello World");
-});
+final router = Appwrouter.instance
+  ..get(
+    version: "v1",
+    path: "/index",
+    handler: indexHandler,
+  )
+  ..get(
+    version: "v1",
+    path: "/index/:studentId/grades/:id",
+    handler: withParamsHandler,
+  );
 ```
 
 2. Initialize the Approuter in the main method of Appwrite Cloud Function.
 
-```typescript
+```dart
 
-export default async ({req,res,log,error})={
-    return await initialize({
-    req,
-    res,
-    log,
-    error,
-    onMiddleware: async ({
-      req,
-      res,
-      log,
-      error,
-      path,
-      eventMap,
-      eventType,
-      method,
-      triggeredType,
-    }) => {
-     ///  In Middleware, you can do some operation for handling the redirect path, or you can do some operation before it proceed to `onNext` function. But after handling the middle make sure to return the `Client` object from Appwrite SDK.
-    //  ...
-     return client
-    },
-    onNext: async (client) => {
-      return await router.handleRequest({ req, res, log, error, client });
-    },
-    onError: (e) => {
+Future<dynamic> main(final context) async {
+  context.log("Initializing Appwrouter");
 
-      return res.send(
-        JSON.stringify({
-          message: "Internal server error",
-          error: e,
+  return await initialize(
+    Initialize(
+        req: context.req,
+        res: context.res,
+        log: context.log,
+        error: context.error,
+        onMiddleware: (payload) async {
+          final OnMiddleware(
+            :log,
+            :req,
+            :triggeredType,
+            :path,
+            :method,
+            :eventType,
+            :eventMap,
+          ) = payload;
+             ///  In Middleware, you can do some operation for handling the redirect path, or you can do some operation before it proceed to `onNext` function. But after handling the middle make sure to return the `Client` object from Appwrite SDK.
+             //  ...
+
+          return client;
+        },
+        onNext: (req, res, client) async {
+          return await router.handleRequest(
+            handlerequest: HandleRequest(
+              req: req,
+              res: res,
+              log: context.log,
+              error: context.error,
+              client: client,
+            ),
+          );
+        },
+        onError: (e) {
+          context.error(e.toString());
+          return context.res.send(
+            jsonEncode({
+              "message": "Internal Server Error",
+            }),
+            500,
+            {
+              "content-type": "application/json",
+            },
+          );
         }),
-        500,
-        {
-          "content-type": "application/json",
-        }
-      );
-    },
-  });
+  );
 }
+
 ```
 
 ## Appwrouter Instance
 
 #### get
 
-```typescript
-router.get("v1", "/", async ({ req, res, log, error, client }) => {
-  res.send("Hello World");
-});
+```dart
+Appwrouter.instance..get(
+    version: "v1",
+    path: "/",
+    handler: (handleRequest) async {
+      handleRequest.res.send("Hello World");
+    },
+  )
 ```
 
 #### post
 
-```typescript
-router.post("v1", "/", async ({ req, res, log, error, client }) => {
-  res.send("Hello World");
-});
+```dart
+Appwrouter.instance..post(
+    version: "v1",
+    path: "/",
+    handler: (handleRequest) async {
+      handleRequest.res.send("Hello World");
+    },
+  )
 ```
 
 #### put
 
-```typescript
-router.put("v1", "/", async ({ req, res, log, error, client }) => {
-  res.send("Hello World");
-});
+```dart
+Appwrouter.instance..put(
+    version: "v1",
+    path: "/",
+    handler: (handleRequest) async {
+      handleRequest.res.send("Hello World");
+    },
+  )
 ```
 
 #### patch
 
-```typescript
-router.patch("v1", "/", async ({ req, res, log, error, client }) => {
-  res.send("Hello World");
-});
+```dart
+Appwrouter.instance..patch(
+    version: "v1",
+    path: "/",
+    handler: (handleRequest) async {
+      handleRequest.res.send("Hello World");
+    },
+  )
 ```
 
 #### delete
 
-```typescript
-router.delete("v1", "/", async ({ req, res, log, error, client }) => {
-  res.send("Hello World");
-});
+```dart
+Appwrouter.instance..delete(
+    version: "v1",
+    path: "/",
+    handler: (handleRequest) async {
+      handleRequest.res.send("Hello World");
+    },
+  )
 ```
 
 #### handleRequest
 
 The third parameter of route handler is an function which will be called when the route is matched. The function will receive an object with the following properties:
 
-- `req`: The request object.
-- `res`: The response object.
+- `req`: The AppwrouterRequest that mimic the request object in the Appwrite SDK.
+- `res`: The AppwrouterResponse that mimic the response object in the Appwrite SDK.
 - `log`: The log object.
 - `error`: The error object.
 - `client`: The Appwrite SDK client object.
 
-```typescript
-router.get("v1", "/", async ({ req, res, log, error, client }) => {
-  res.send("Hello World");
-});
+```dart
+Appwrouter.instance..get(
+    version: "v1",
+    path: "/",
+    handler: (handleRequest) async {
+      handleRequest.res.send("Hello World");
+    },
+  )
 ```
 
 It recommend to encapsulate the route handler logic in a separate function and pass it as a parameter to the route handler.
 
-```typescript
-import { RouteHandler } from "appwrouter";
+```dart
 
-const handler: RouteHandler = async ({ req, res, log, error, client }) => {
-  res.send("Hello World");
-};
-
-router.get("v1", "/", handler);
+Future<dynamic> handler(HandleRequest handler) async {
+  handler.res.send("Hello World");
+}
+Appwrouter.instance
+  ..get(
+    version: "v1",
+    path: "/",
+    handler: handler,
+  )
 ```
 
 > Please be informed that the `handleRequest` function should be returned as same how Appwrite cloud function returning a response. For resources on how to return a response in Appwrite cloud function, please refer to the [Appwrite Cloud Function Response documentation](https://appwrite.io/docs/products/functions/development#response).
@@ -205,10 +231,13 @@ router.get("v1", "/", handler);
 
 In Appwrouter, you can indicate the version of the route by passing the version as the first parameter of the route handler.
 
-```typescript
-router.get("v1", "/", async ({ req, res, log, error, client }) => {
-  res.send("Hello World");
-});
+```dart
+Appwrouter.instance
+  ..get(
+    version: "v1",
+    path: "/",
+    handler: handler,
+  )
 ```
 
 > Why versioning routes? Versioning routes is a good practice to maintain backward compatibility. By versioning your routes, you can easily maintain multiple versions of the same route.
@@ -219,18 +248,17 @@ router.get("v1", "/", async ({ req, res, log, error, client }) => {
 
 In `onMiddleware` function, you can do some operation for handling the redirect path, or you can do some operation before it proceed to `onNext` function. But after handling the middle make sure to return the `Client` object from Appwrite SDK.
 
-```typescript
-onMiddleware: async ({
-  req,
-  res,
-  log,
-  error,
-  path,
-  eventMap,
-  eventType,
-  method,
-  triggeredType,
-}) => {
+```dart
+onMiddleware:  (payload) {
+  final OnMiddleware(
+            :log,
+            :req,
+            :triggeredType,
+            :path,
+            :method,
+            :eventType,
+            :eventMap,
+  ) = payload;
   //  In Middleware, you can do some operation for handling the redirect path, or you can do some operation before it proceed to `onNext` function. But after handling the middle make sure to return the `Client` object from Appwrite SDK.
   //  ...
   return client;
@@ -241,8 +269,8 @@ onMiddleware: async ({
 
 The `onMiddleware` function have the following parameters:
 
-- `req`: The request object.
-- `res`: The response object.
+- `req`: AppwrouterRequest object that mimic the request object in the Appwrite SDK.
+- `res`: AppwrouterResponse object that mimic the response object in the Appwrite SDK.
 - `log`: The log object.
 - `error`: The error object.
 - `method`: The HTTP method of the request. For example, `GET`, `POST`, `PUT`, `PATCH`, `DELETE`.
@@ -250,7 +278,7 @@ The `onMiddleware` function have the following parameters:
 - `eventType` : The type of the event. For example, `create`, `update`, `delete`. This parameter is only available when the `triggeredType` is `event`. It means that this could be a `undefined` value.
 - eventMap : The event map object. This parameter is only available when the `triggeredType` is `event`. It means that this could be a `undefined` value. In the `x-appwrite-event` header, it contains a string, for example, `databases.[id].collections.[id].documents.[id].create`. This string will be converted to an object. For example, `eventMap` will be
 
-```typescript
+```dart
 {
   'databases': '[id]',
   'collections': '[id]',
@@ -262,75 +290,91 @@ The `onMiddleware` function have the following parameters:
 
 In `onNext` function, you can call the `handleRequest` function from the Appwrouter instance.
 
-```typescript
-onNext: async (client) => {
-  return await router.handleRequest({ req, res, log, error, client });
-},
+```dart
+onNext: (req, res, client) async {
+          return await router.handleRequest(
+            handlerequest: HandleRequest(
+              req: req,
+              res: res,
+              log: context.log,
+              error: context.error,
+              client: client,
+            ),
+          );
+        },
 ```
 
 #### `onError`
 
 This function will be called when an error occurs in the Appwrite Cloud Function.
 
-```typescript
-onError: (e) => {
-  return res.send(
-    JSON.stringify({
-      message: "Internal server error",
-      error: e,
-    }),
-    500,
-    {
-      "content-type": "application/json",
-    }
-  );
-},
+```dart
+     onError: (e) {
+       context.error(e.toString());
+       return context.res.send(
+         jsonEncode({
+           "message": "Internal Server Error",
+         }),
+         500,
+         {
+           "content-type": "application/json",
+         },
+       );
+     }),
 ```
 
 ## Redirects
 
 In Appwrouter, can handle redirects by using the `redirect` method from Appwrouter package. If you want a redirect or manipulating the default path that given by Appwrite Cloud Function, then handle the redirect path in `onMiddleware` function.
 
-```typescript
-redirect(req, "/v1/some/other/path");
+```dart
+redirect(req, path: "/v1/some/other/path");
 ```
 
 In Example usage:
 
-```typescript
-onMiddleware: async ({
-     req,
-      res,
-      log,
-      error,
-      path,
-      eventMap,
-      eventType,
-      method,
-      triggeredType,}) => {
-        if (triggeredType === "event" && path === "/" && method === "POST") {
-        if (eventType === "update") {
-          log(`Event map: ${JSON.stringify(eventMap)}`);
+```dart
+onMiddleware:  (payload) {
+  final OnMiddleware(
+            :log,
+            :req,
+            :triggeredType,
+            :path,
+            :method,
+            :eventType,
+            :eventMap,
+  ) = payload;
 
-          if (
-            eventMap["collections"] === "<COLLECTION_ID>" &&
-            eventMap["documents"]
-          ) {
-            log('Redirecting to "/v1/some/other/path"');
 
-            // Here we are redirecting to another path
-            redirect(req, "/v1/some/other/path");
+          if (Platform.environment['APPWRITE_FUNCTION_ENDPOINT'] == null ||
+              Platform.environment['APPWRITE_FUNCTION_API_KEY'] == null) {
+            throw Exception(
+                "APPWRITE_FUNCTION_ENDPOINT and APPWRITE_FUNCTION_API_KEY are required");
           }
-        } else if (eventType === "create") {
-          if (eventMap["users"]) {
-            log('Redirecting to micro service "/v2/micro/users"');
 
-            /// Here we are redirecting to another path
-            redirect(req, "/v2/micro/users");
+          client
+              .setEndpoint(Platform.environment['APPWRITE_FUNCTION_ENDPOINT']!)
+              .setKey(Platform.environment['APPWRITE_FUNCTION_API_KEY']!);
+          if (triggeredType == TriggeredType.event &&
+              path == "/" &&
+              method == MethodType.post) {
+            if (eventType == EventType.update) {
+              log('Event map: $eventMap');
+
+              if (eventMap!["collections"] == "<COLLECTION_ID>" &&
+                  eventMap["documents"]) {
+
+                // Here you can handle the redirect path
+                log('Redirecting to "/v1/some/other/path"');
+                redirect(req, path: "/v1/some/other/path");
+              }
+            } else if (eventType == EventType.create) {
+              if (eventMap!["users"]) {
+                log('Redirecting to micro service "/v2/micro/users"');
+                redirect(req, path: "/v2/micro/users");
+              }
+            }
           }
-        }
-      }
-  }
   return client;
 },
 ```
@@ -339,11 +383,21 @@ onMiddleware: async ({
 
 In Appwrite Cloud Function, it already gives you how to get the query parameters by using `req.query` object. But it does not handle the path parameters. In Appwrouter, you can handle the path parameters by using the `req.params` object.
 
-```typescript
-router.get("v1", "/user/:id", async ({ req, res, log, error, client }) => {
-  const { id } = req.params;
-  res.send(`User ID: ${id}`);
-});
+```dart
+Appwrouter.instance..get(
+    version: "/user/:id,
+    path: "/",
+    handler: (handleRequest) async {
+      final HandleRequest(
+        :req,
+        :res,
+        :error,
+        :log,
+      ) = handler;
+      final params = req.params;
+      res.send("User ID: ${params["id"]}");
+    },
+  )
 ```
 
 ## License

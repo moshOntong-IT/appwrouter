@@ -1,6 +1,6 @@
 name: appwrouter
 description: A router for appwrite cloud functions
-version: 0.2.5
+version: 0.2.6
 license: MIT
 homepage: https://github.com/moshOntong-IT/appwrouter/dart/appwrouter
 repository: https://github.com/moshOntong-IT/appwrouter/dart/appwrouter

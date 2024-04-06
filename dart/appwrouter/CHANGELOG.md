@@ -1,3 +1,7 @@
+# 0.2.6
+
+- feat: improved the documentation
+
 # 0.2.5
 
 - fix: Class 'RuntimeResponse' has no instance getter 'html'.
