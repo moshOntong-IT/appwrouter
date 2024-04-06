@@ -41,19 +41,19 @@ class Appwrouter {
   }
 
   /// A Client instance from Appwrite SDK
-  late final Client? _client;
+  Client? _client;
 
   /// A Request mimic from Appwrite Context
-  late final AppwrouterRequest? _req;
+  AppwrouterRequest? _req;
 
   /// A Response mimic from Appwrite Context
-  late final AppwrouterResponse? _res;
+  AppwrouterResponse? _res;
 
   /// A log method from Appwrite Context
-  late final dynamic _log;
+  dynamic _log;
 
   /// An error log method from Appwrite context
-  late final dynamic _errorLog;
+  dynamic _errorLog;
 
   /// GET registration method
   void get({
