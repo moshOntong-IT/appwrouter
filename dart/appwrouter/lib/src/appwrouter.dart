@@ -315,7 +315,7 @@ class Appwrouter {
           eventMap: eventMap,
         );
 
-        final onMiddlewareResponse = await onMiddleware(
+        final onMiddlewareResponse = onMiddleware(
           req,
           res,
           middlewarePayload,
@@ -325,12 +325,12 @@ class Appwrouter {
           _next,
         );
 
-        if (onMiddlewareResponse is! Future<dynamic>) {
+        if (onMiddlewareResponse is Map) {
           throw AppwrouterException(
             message: '''
 The onMiddleware function should return a Future<dynamic> but got ${onMiddlewareResponse.runtimeType}
-To fix this, use the next as a `return await next();`. If you use the redirect then,
-use `return await redirect('/v1/path'). If the error is still there, please raise an issue at
+To fix this, use the next as a `return next();`. If you use the redirect then,
+use `return redirect('/v1/path'). If the error is still there, please raise an issue at
 https://github.com/moshOntong-IT/appwrouter/issues.
 
 This error occured because you did not get the Response object from `AppwrouterResponse`.
