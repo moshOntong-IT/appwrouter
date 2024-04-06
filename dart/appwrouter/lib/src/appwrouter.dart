@@ -166,6 +166,7 @@ class Appwrouter {
     return null;
   }
 
+  // TODO: add a method to generate the path parameters
   /// A function to handle the request
   Future<dynamic> handleRequest({
     required AppwrouterRequest req,
@@ -316,7 +317,7 @@ class Appwrouter {
           );
         }
 
-        return await onMiddleware(
+        final onMiddlewareResponse = await onMiddleware(
           req,
           res,
           middlewarePayload,
@@ -324,6 +325,17 @@ class Appwrouter {
           redirect,
           next,
         );
+
+        if (onMiddlewareResponse is! Future<dynamic>) {
+          throw Exception('''
+The onMiddleware function should return a Future<dynamic> but got ${onMiddlewareResponse.runtimeType}
+To fix this, use the next as a `return await next();`. If you use the redirect then,
+use `return await redirect('/v1/path'). If the error is still there, please raise an issue at
+https://github.com/moshOntong-IT/appwrouter/issues
+''');
+        } else {
+          return onMiddlewareResponse;
+        }
       }
     } catch (e) {
       if (onError == null) {
