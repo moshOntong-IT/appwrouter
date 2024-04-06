@@ -109,7 +109,7 @@ export default async ({req,res,log,error})={
     //  ...
      return client
     },
-    onNext: async (client) => {
+    onNext: async (req,res,client) => {
       return await router.handleRequest({ req, res, log, error, client });
     },
     onError: (e) => {
@@ -263,7 +263,7 @@ The `onMiddleware` function have the following parameters:
 In `onNext` function, you can call the `handleRequest` function from the Appwrouter instance.
 
 ```typescript
-onNext: async (client) => {
+onNext: async (req,res,client) => {
   return await router.handleRequest({ req, res, log, error, client });
 },
 ```

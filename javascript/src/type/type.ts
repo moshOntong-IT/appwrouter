@@ -5,8 +5,8 @@ export type MethodType = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 export type EventType = "create" | "update" | "delete";
 
 export interface OnMiddleware {
-  req: any;
-  res: any;
+  req: AppwrouterRequest;
+  res: AppwrouterResponse;
   log: any;
   error: any;
   method: MethodType;
@@ -15,12 +15,38 @@ export interface OnMiddleware {
   eventMap?: { [key: string]: string };
   path: string;
 }
-export interface Middleware {
-  req: any;
-  res: any;
+export interface Initialize {
+  req: AppwrouterRequest;
+  res: AppwrouterResponse;
   log: any;
   error: any;
   onMiddleware: (middleware: OnMiddleware) => Promise<Client> | Client;
-  onNext: (client: Client) => Promise<any> | any;
+  onNext: (
+    req: AppwrouterRequest,
+    res: AppwrouterResponse,
+    client: Client
+  ) => Promise<any> | any;
   onError: (error: unknown) => any;
+}
+
+export interface AppwrouterRequest {
+  bodyRaw: string;
+  body: any;
+  headers: { [key: string]: any };
+  scheme: any;
+  method: MethodType;
+  url: string;
+  host: string;
+  port: number;
+  path: string;
+  queryString: string;
+  query: { [key: string]: any };
+  params?: { [key: string]: any };
+}
+
+export interface AppwrouterResponse {
+  empty: any;
+  json: any;
+  redirect: any;
+  send: any;
 }

@@ -1,4 +1,4 @@
-import { EventType, Middleware as Initialize } from "./type/type";
+import { EventType, Initialize } from "./type/type";
 import { eventTypeParse, getSpecificEventType } from "./type/util";
 
 export const initialize = async ({
@@ -20,7 +20,7 @@ export const initialize = async ({
       eventMap = eventTypeParse(fullEventType);
       eventType = getSpecificEventType(fullEventType!);
     }
-    const middleware = await onMiddleware({
+    const client = await onMiddleware({
       req,
       res,
       log,
@@ -32,7 +32,7 @@ export const initialize = async ({
       path: req.path,
     });
 
-    return await onNext(middleware);
+    return await onNext(req, res, client);
   } catch (e: unknown) {
     return onError(e);
   }

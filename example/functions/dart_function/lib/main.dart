@@ -21,6 +21,7 @@ final router = Appwrouter.instance
 
 Future<dynamic> main(final context) async {
   context.log("Initializing Appwrouter");
+
   return await initialize(
     Initialize(
         req: context.req,

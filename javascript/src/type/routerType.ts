@@ -1,10 +1,10 @@
 import { Client } from "node-appwrite";
-import { MethodType } from "./type";
+import { AppwrouterRequest, AppwrouterResponse, MethodType } from "./type";
 
 export type version = string;
 export type HandleRequestType = {
-  req: any;
-  res: any;
+  req: AppwrouterRequest;
+  res: AppwrouterResponse;
   log: any;
   error: any;
   client: Client;

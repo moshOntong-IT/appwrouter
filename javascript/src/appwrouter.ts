@@ -103,7 +103,7 @@ class Appwrouter {
     }
 
     const version = pathSegments[1];
-    const method = req.method.toUpperCase();
+    const method = req.method.toUpperCase() as MethodType;
     const path = `/${pathSegments.slice(2).join("/")}`;
 
     const matchedRoute = this.matchRoute({ version, method, path });

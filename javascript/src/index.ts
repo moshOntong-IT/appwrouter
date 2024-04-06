@@ -8,7 +8,7 @@ import {
 import { redirect } from "./type/util";
 import {
   OnMiddleware,
-  Middleware,
+  Initialize,
   TriggeredType,
   MethodType,
   EventType,
@@ -19,7 +19,7 @@ export {
   Appwrouter,
   RouteHandler,
   OnMiddleware,
-  Middleware,
+  Initialize,
   TriggeredType,
   MethodType,
   EventType,
