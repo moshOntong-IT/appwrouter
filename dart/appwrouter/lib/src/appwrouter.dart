@@ -41,7 +41,19 @@ class Appwrouter {
   }
 
   /// A Client instance from Appwrite SDK
-  late final Client client;
+  late final Client _client;
+
+  /// A Request mimic from Appwrite Context
+  late final AppwrouterRequest _req;
+
+  /// A Response mimic from Appwrite Context
+  late final AppwrouterResponse _res;
+
+  /// A log method from Appwrite Context
+  late final dynamic _log;
+
+  /// An error log method from Appwrite context
+  late final dynamic _errorLog;
 
   /// GET registration method
   void get({
@@ -267,7 +279,11 @@ class Appwrouter {
     final log = context.log;
     final error = context.error;
     try {
-      client = Client();
+      _client = Client();
+      _req = req;
+      _res = res;
+      _log = log;
+      _errorLog = error;
 
       if (onMiddleware == null) {
         return await handleRequest(
@@ -275,7 +291,7 @@ class Appwrouter {
           res: res,
           log: log,
           error: error,
-          client: client,
+          client: _client,
         );
       } else {
         final triggeredType = TriggeredType.fromCode(
@@ -299,33 +315,14 @@ class Appwrouter {
         );
 
         log('Middleware payload: $middlewarePayload');
-        Future<dynamic> redirect(String path) async {
-          return handleRequest(
-            req: req.copyWith(path: path),
-            res: res,
-            log: log,
-            error: error,
-            client: client,
-          );
-        }
-
-        Future<dynamic> next() async {
-          return handleRequest(
-            req: req,
-            res: res,
-            log: log,
-            error: error,
-            client: client,
-          );
-        }
 
         final onMiddlewareResponse = await onMiddleware(
           req,
           res,
           middlewarePayload,
-          client,
-          redirect,
-          next,
+          _client,
+          _redirect,
+          _next,
         );
 
         if (onMiddlewareResponse is! Future<dynamic>) {
@@ -356,5 +353,25 @@ This error occured because you did not get the Response object from `AppwrouterR
         return onError(req, res, error, e);
       }
     }
+  }
+
+  Future<dynamic> _redirect(String path) async {
+    return handleRequest(
+      req: _req.copyWith(path: path),
+      res: _res,
+      log: _log,
+      error: _errorLog,
+      client: _client,
+    );
+  }
+
+  Future<dynamic> _next() async {
+    return handleRequest(
+      req: _req,
+      res: _res,
+      log: _log,
+      error: _errorLog,
+      client: _client,
+    );
   }
 }
