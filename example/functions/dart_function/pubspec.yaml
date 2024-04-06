@@ -1,11 +1,16 @@
 name: starter_template
 version: 1.0.0
+publish_to: none
 
 environment:
   sdk: ^3.0.0
 
 dependencies:
-  appwrouter: ^0.2.4
+  appwrouter:
+    git:
+      url: https://github.com/moshOntong-IT/appwrouter.git
+      path: dart/appwrouter
+      ref: shorten
   dart_appwrite: 11.0.1
 
 dev_dependencies:
