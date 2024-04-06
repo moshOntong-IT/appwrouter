@@ -311,7 +311,7 @@ class Appwrouter {
           eventType: eventType,
           eventMap: eventMap,
         );
-        log(req.params);
+
         final onMiddlewareResponse = onMiddleware(
           _req!,
           _res!,
