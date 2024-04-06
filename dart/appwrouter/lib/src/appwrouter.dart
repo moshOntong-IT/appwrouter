@@ -140,6 +140,7 @@ class Appwrouter {
     );
     final path = '/${pathSegments.sublist(2).join('/')}';
     _log(path);
+
     final versionRoutes = versions[version];
     if (versionRoutes == null) {
       // ignore: lines_longer_than_80_chars
@@ -168,19 +169,7 @@ class Appwrouter {
             )
             .toList();
 
-        if (routePattern.length != pathSegments.length) {
-          _errorLog('$routePattern == $pathSegments');
-          _errorLog(
-            // ignore: lines_longer_than_80_chars
-            'The number of segments in the route pattern does not match the number of segments in the provided path. Please ensure they align.',
-          );
-          throw const AppwrouterException(
-            message:
-                // ignore: lines_longer_than_80_chars
-                'The requested URL does not match any of our routes. Please check the URL and try again.',
-            status: 400,
-          );
-        }
+        if (routePattern.length != pathSegments.length) continue;
 
         var isMatch = true;
         for (var i = 0; i < routePattern.length; i++) {
