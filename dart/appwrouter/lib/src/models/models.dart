@@ -1,3 +1,5 @@
+export 'src/appwrouter_request.dart';
+export 'src/appwrouter_response.dart';
 export 'src/event_type.dart';
 export 'src/handle_request.dart';
 export 'src/initialize.dart';

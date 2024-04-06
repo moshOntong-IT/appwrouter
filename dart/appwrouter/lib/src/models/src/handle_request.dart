@@ -1,4 +1,5 @@
-import 'package:appwrite/appwrite.dart';
+import 'package:appwrouter/src/models/models.dart';
+import 'package:dart_appwrite/dart_appwrite.dart';
 
 /// {@template handle_requuest_type}
 /// A class for handling the Request in Function
@@ -13,11 +14,11 @@ class HandleRequest {
     required this.client,
   });
 
-  /// A request from Appwrite Function Context
-  final dynamic req;
+  /// A request parsed from Appwrite Function Context
+  final AppwrouterRequest req;
 
-  /// A result from Appwrite Function Context
-  final dynamic res;
+  /// A response parsed from Appwrite Function Context
+  final AppwrouterResponse res;
 
   /// A log from Appwrite Function Context
   final dynamic log;

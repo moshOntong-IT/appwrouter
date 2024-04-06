@@ -1,5 +1,4 @@
 import 'package:appwrouter/appwrouter.dart';
-import 'package:appwrouter/src/models/src/method_type.dart';
 
 /// {@template route}
 /// A route class

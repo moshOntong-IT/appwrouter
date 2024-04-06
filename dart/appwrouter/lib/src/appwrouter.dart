@@ -172,7 +172,7 @@ class Appwrouter {
       :error,
       :client,
     ) = handlerequest;
-    final pathRequest = req['path'] as String;
+    final pathRequest = req.path;
     final pathSegments = pathRequest.split('/');
     if (pathSegments.length < 2) {
       error('Bad request');
@@ -187,7 +187,9 @@ class Appwrouter {
     }
 
     final version = pathSegments[1];
-    final method = MethodType.fromCode(req.method.toUpperCase() as String);
+    final method = MethodType.fromCode(
+      req.method.toUpperCase(),
+    );
     final path = '/${pathSegments.sublist(2).join('/')}';
 
     final matchedRoute = matchRoute(
@@ -215,10 +217,7 @@ class Appwrouter {
     log('Matched route: $pathRequest with method $method');
 
     try {
-      final newReq = {
-        ...req as Map<String, dynamic>,
-        'params': matchedRoute.params,
-      };
+      final newReq = req.copyWith(params: matchedRoute.params);
 
       return await matchedRoute.handler(
         HandleRequest(

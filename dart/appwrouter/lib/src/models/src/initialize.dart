@@ -1,9 +1,7 @@
 import 'dart:async';
 
-import 'package:appwrite/appwrite.dart';
-import 'package:appwrouter/src/models/src/event_type.dart';
-import 'package:appwrouter/src/models/src/method_type.dart';
-import 'package:appwrouter/src/models/src/triggered_type.dart';
+import 'package:appwrouter/src/models/models.dart';
+import 'package:dart_appwrite/dart_appwrite.dart';
 
 /// {@template on_middleware}
 /// A property of middleware
@@ -23,10 +21,10 @@ class OnMiddleware {
   });
 
   /// A request from Appwrite Function Context
-  final dynamic req;
+  final AppwrouterRequest req;
 
-  /// A result from Appwrite Function Context
-  final dynamic res;
+  /// A response from Appwrite Function Context
+  final AppwrouterResponse res;
 
   /// A log from Appwrite Function Context
   final dynamic log;
@@ -56,20 +54,21 @@ class OnMiddleware {
 class Initialize {
   /// {@macro middleware}
   Initialize({
-    required this.req,
-    required this.res,
+    required dynamic req,
+    required dynamic res,
     required this.log,
     required this.error,
     required this.onMiddleware,
     required this.onNext,
     required this.onError,
-  });
+  })  : req = AppwrouterRequest.parse(req),
+        res = AppwrouterResponse.parse(res);
 
-  /// A request from Appwrite Function Context
-  final dynamic req;
+  /// A request instance parsed from Appwrite Function Context
+  final AppwrouterRequest req;
 
-  /// A result from Appwrite Function Context
-  final dynamic res;
+  /// A result instance parsed from Appwrite Function Context
+  final AppwrouterResponse res;
 
   /// A log from Appwrite Function Context
   final dynamic log;
@@ -78,11 +77,15 @@ class Initialize {
   final dynamic error;
 
   /// A middleware function
-  final FutureOr<Client> Function(OnMiddleware) onMiddleware;
+  final Future<Client> Function(OnMiddleware) onMiddleware;
 
   /// A next function
-  final FutureOr<dynamic> Function(Client) onNext;
+  final Future<dynamic> Function(
+    AppwrouterRequest req,
+    AppwrouterResponse res,
+    Client client,
+  ) onNext;
 
   /// An error function
-  final FutureOr<void> Function(dynamic) onError;
+  final Future<void> Function(dynamic) onError;
 }

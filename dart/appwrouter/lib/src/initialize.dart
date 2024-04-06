@@ -15,7 +15,7 @@ Future<dynamic> initialize(Initialize initialize) async {
   ) = initialize;
   try {
     final triggeredType = TriggeredType.fromCode(
-      (req['headers'])['x-appwrite-trigger'] as String,
+      (req.headers)['x-appwrite-trigger'] as String,
     );
     String? fullEventType;
     EventType? eventType;
@@ -33,15 +33,15 @@ Future<dynamic> initialize(Initialize initialize) async {
         res: res,
         log: log,
         error: error,
-        method: MethodType.fromCode(req['method'] as String),
+        method: MethodType.fromCode(req.method),
         triggeredType: triggeredType,
-        path: req['path'] as String,
+        path: req.path,
         eventType: eventType,
         eventMap: eventMap,
       ),
     );
 
-    return await onNext(client);
+    return await onNext(req, res, client);
   } catch (e) {
     return onError(e);
   }
