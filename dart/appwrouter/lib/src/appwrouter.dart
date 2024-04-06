@@ -287,9 +287,8 @@ class Appwrouter {
       _errorLog = error;
 
       _log('Initializing appwrouter...');
-
+      final routeMatch = _matchRoute();
       if (onMiddleware == null) {
-        final routeMatch = _matchRoute();
         return await _handleRequest(
           routeMatch: routeMatch,
         );
