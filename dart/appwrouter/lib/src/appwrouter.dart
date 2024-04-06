@@ -267,7 +267,6 @@ class Appwrouter {
     final log = context.log;
     final error = context.error;
     try {
-      log('Initializing Appwrouter');
       client = Client();
 
       if (onMiddleware == null) {
@@ -310,7 +309,6 @@ class Appwrouter {
           );
         }
 
-        log('My below is next');
         Future<dynamic> next() async {
           return handleRequest(
             req: req,
@@ -329,16 +327,17 @@ class Appwrouter {
           redirect,
           next,
         );
-        log(onMiddlewareResponse.runtimeType.toString());
+
         if (onMiddlewareResponse is! Future<dynamic>) {
           throw Exception('''
 The onMiddleware function should return a Future<dynamic> but got ${onMiddlewareResponse.runtimeType}
 To fix this, use the next as a `return await next();`. If you use the redirect then,
 use `return await redirect('/v1/path'). If the error is still there, please raise an issue at
-https://github.com/moshOntong-IT/appwrouter/issues
+https://github.com/moshOntong-IT/appwrouter/issues.
+
+This error occured because you did not get the Response object from `AppwrouterResponse`.
 ''');
         } else {
-          log('Called here');
           return onMiddlewareResponse;
         }
       }

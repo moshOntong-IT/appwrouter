@@ -21,8 +21,8 @@ Future<dynamic> main(final context) => router.initialize(
       onMiddleware: (req, res, payload, client, redirect, next) async {
         return next();
       },
-      onError: (req, res, error) {
-        error("Error while handling request: $error");
+      onError: (req, res, errorLog, error) {
+        errorLog("Error while handling request: $error");
         return res.send(
           error.toString(),
           500,
