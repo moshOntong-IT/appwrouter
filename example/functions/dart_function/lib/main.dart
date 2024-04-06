@@ -19,7 +19,7 @@ final router = Appwrouter.instance
 Future<dynamic> main(final context) => router.initialize(
       context,
       onMiddleware: (req, res, payload, client, redirect, next) async {
-        return await next();
+        return next();
       },
       onError: (req, res, error) {
         return res.send(

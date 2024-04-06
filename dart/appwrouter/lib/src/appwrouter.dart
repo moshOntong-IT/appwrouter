@@ -325,7 +325,7 @@ class Appwrouter {
           redirect,
           next,
         );
-
+        log(onMiddlewareResponse.runtimeType.toString());
         if (onMiddlewareResponse is! Future<dynamic>) {
           throw Exception('''
 The onMiddleware function should return a Future<dynamic> but got ${onMiddlewareResponse.runtimeType}
