@@ -241,6 +241,7 @@ class Appwrouter {
 
     try {
       final newReq = _req!.copyWith(params: routeMatch.params);
+      _req = newReq;
 
       return await routeMatch.handler!(
         req: newReq,
