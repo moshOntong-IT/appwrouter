@@ -315,8 +315,8 @@ class Appwrouter {
         );
 
         final onMiddlewareResponse = onMiddleware(
-          req,
-          res,
+          _req!,
+          _res!,
           middlewarePayload,
           _log,
           _errorLog,
