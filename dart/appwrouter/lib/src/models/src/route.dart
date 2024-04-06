@@ -16,4 +16,9 @@ class Route {
   RouteHandler getMethod(MethodType method) {
     return methods[method]!;
   }
+
+  @override
+  String toString() {
+    return methods.toString();
+  }
 }

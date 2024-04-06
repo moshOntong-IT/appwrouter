@@ -16,4 +16,9 @@ class VersionedRoutes {
   Route getRoute(String path) {
     return routes[path]!;
   }
+
+  @override
+  String toString() {
+    return routes.toString();
+  }
 }
