@@ -297,6 +297,7 @@ class Appwrouter {
       _errorLog = error;
 
       _log('Initializing appwrouter...');
+      log(versions.toString());
 
       if (onMiddleware == null) {
         final routeMatch = _matchRoute();
