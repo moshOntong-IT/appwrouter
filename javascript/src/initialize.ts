@@ -1,4 +1,4 @@
-import { EventType, Middleware } from "./type/type";
+import { EventType, Middleware as Initialize } from "./type/type";
 import { eventTypeParse, getSpecificEventType } from "./type/util";
 
 export const initialize = async ({
@@ -9,7 +9,7 @@ export const initialize = async ({
   onMiddleware,
   onNext,
   onError,
-}: Middleware): Promise<any> => {
+}: Initialize): Promise<any> => {
   try {
     const triggeredType = req.headers["x-appwrite-trigger"];
     let fullEventType: string | undefined;

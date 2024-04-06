@@ -2,18 +2,19 @@ import {
   HandleRequestType,
   MatchRouteType,
   RouteHandler,
+  version,
   VersionedRoutes,
 } from "./type/routerType";
 import { MethodType } from "./type/type";
 
 class Appwrouter {
-  private versions: { [version: string]: VersionedRoutes };
+  private versions: { [version: version]: VersionedRoutes };
   constructor() {
     this.versions = {};
   }
 
   register(
-    version: string,
+    version: version,
     method: MethodType,
     path: string,
     handler: RouteHandler
@@ -27,23 +28,23 @@ class Appwrouter {
     this.versions[version][path][method.toUpperCase()] = handler;
   }
 
-  get(version: string, path: string, handler: RouteHandler): void {
+  get(version: version, path: string, handler: RouteHandler): void {
     this.register(version, "GET", path, handler);
   }
 
-  post(version: string, path: string, handler: RouteHandler): void {
+  post(version: version, path: string, handler: RouteHandler): void {
     this.register(version, "POST", path, handler);
   }
 
-  delete(version: string, path: string, handler: RouteHandler): void {
+  delete(version: version, path: string, handler: RouteHandler): void {
     this.register(version, "DELETE", path, handler);
   }
 
-  put(version: string, path: string, handler: RouteHandler): void {
+  put(version: version, path: string, handler: RouteHandler): void {
     this.register(version, "PUT", path, handler);
   }
 
-  patch(version: string, path: string, handler: RouteHandler): void {
+  patch(version: version, path: string, handler: RouteHandler): void {
     this.register(version, "PATCH", path, handler);
   }
 

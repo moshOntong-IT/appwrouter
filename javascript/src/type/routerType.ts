@@ -1,6 +1,7 @@
 import { Client } from "node-appwrite";
 import { MethodType } from "./type";
 
+export type version = string;
 export type HandleRequestType = {
   req: any;
   res: any;
