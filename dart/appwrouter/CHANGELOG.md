@@ -1,3 +1,7 @@
+# 0.2.7
+
+- fix: example link in the README
+
 # 0.2.6
 
 - feat: improved the documentation

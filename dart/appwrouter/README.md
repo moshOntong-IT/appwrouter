@@ -1,6 +1,6 @@
 # Appwrouter
 
-> Example of a simple router for Appwrite Cloud Functions with support for middlewares and error handling. [Click Me](https://github.com/moshOntong-IT/appwrouter/tree/master/example/functions/node_function)
+> Example of a simple router for Appwrite Cloud Functions with support for middlewares and error handling. [Click Me](https://github.com/moshOntong-IT/appwrouter/tree/master/example/functions/dart_function)
 
 ## Table of Contents
 
