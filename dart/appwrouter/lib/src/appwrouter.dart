@@ -271,7 +271,8 @@ class Appwrouter {
       AppwrouterRequest req,
       AppwrouterResponse res,
       MiddlewarePayload payload,
-      Client client,
+      dynamic log,
+      dynamic error,
       Future<dynamic> Function(String path) redirect,
       Future<dynamic> Function() next,
     )? onMiddleware,
@@ -316,6 +317,7 @@ class Appwrouter {
         }
 
         final middlewarePayload = MiddlewarePayload(
+          client: _client!,
           method: MethodType.fromCode(req.method),
           triggeredType: triggeredType,
           eventType: eventType,
@@ -326,7 +328,8 @@ class Appwrouter {
           req,
           res,
           middlewarePayload,
-          _client!,
+          _log,
+          _errorLog,
           _redirect,
           _next,
         );

@@ -20,15 +20,14 @@ final router = Appwrouter.instance
 Future<dynamic> main(final context) => router.initialize(
       context,
       onMiddleware: (req, res, payload, client, redirect, next) async {
+        
         return await next();
       },
       onError: (req, res, errorLog, error) {
         errorLog("$error");
         return res.send(
-          jsonEncode(
-            error.toString(),
-          ),
-          error is AppwrouterException ? error.status : 500,
+          jsonEncode(error.message),
+          error.status,
           {
             "content-type": "application/json",
           },
