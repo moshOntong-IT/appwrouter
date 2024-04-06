@@ -275,7 +275,7 @@ class Appwrouter {
       Future<dynamic> Function(String path) redirect,
       Future<dynamic> Function() next,
     )? onMiddleware,
-    Future<dynamic> Function(
+    dynamic Function(
       AppwrouterRequest req,
       AppwrouterResponse res,
       dynamic errorLog,
@@ -321,8 +321,6 @@ class Appwrouter {
           eventType: eventType,
           eventMap: eventMap,
         );
-
-        log('Middleware payload: $middlewarePayload');
 
         final onMiddlewareResponse = await onMiddleware(
           req,
