@@ -169,6 +169,7 @@ class Appwrouter {
             .toList();
 
         if (routePattern.length != pathSegments.length) {
+          _errorLog('$routePattern == $pathSegments');
           _errorLog(
             // ignore: lines_longer_than_80_chars
             'The number of segments in the route pattern does not match the number of segments in the provided path. Please ensure they align.',
@@ -297,7 +298,6 @@ class Appwrouter {
       _errorLog = error;
 
       _log('Initializing appwrouter...');
-      log(versions.toString());
 
       if (onMiddleware == null) {
         final routeMatch = _matchRoute();
