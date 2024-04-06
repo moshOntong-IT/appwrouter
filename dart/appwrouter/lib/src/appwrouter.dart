@@ -41,13 +41,13 @@ class Appwrouter {
   }
 
   /// A Client instance from Appwrite SDK
-  late final Client _client;
+  late final Client? _client;
 
   /// A Request mimic from Appwrite Context
-  late final AppwrouterRequest _req;
+  late final AppwrouterRequest? _req;
 
   /// A Response mimic from Appwrite Context
-  late final AppwrouterResponse _res;
+  late final AppwrouterResponse? _res;
 
   /// A log method from Appwrite Context
   late final dynamic _log;
@@ -127,7 +127,7 @@ class Appwrouter {
 
   /// A function to match the route
   RouteMatchHandler _matchRoute() {
-    final pathRequest = _req.path;
+    final pathRequest = _req!.path;
     final pathSegments = pathRequest.split('/');
     if (pathSegments.length < 2) {
       _errorLog('Bad request');
@@ -136,7 +136,7 @@ class Appwrouter {
 
     final version = pathSegments[1];
     final method = MethodType.fromCode(
-      _req.method.toUpperCase(),
+      _req!.method.toUpperCase(),
     );
     final path = '/${pathSegments.sublist(2).join('/')}';
 
@@ -223,7 +223,7 @@ class Appwrouter {
         // ignore: lines_longer_than_80_chars
         'No route found for ${routeMatch.path} with method ${routeMatch.method}',
       );
-      return _res.send(
+      return _res!.send(
           jsonEncode(
             {
               'message':
@@ -237,21 +237,21 @@ class Appwrouter {
           });
     }
 
-    _log('Matched route: ${_req.path} with method ${_req.method}');
+    _log('Matched route: ${_req!.path} with method ${_req!.method}');
 
     try {
-      final newReq = _req.copyWith(params: routeMatch.params);
+      final newReq = _req!.copyWith(params: routeMatch.params);
 
       return await routeMatch.handler!(
         req: newReq,
-        res: _res,
+        res: _res!,
         log: _log,
         error: _errorLog,
-        client: _client,
+        client: _client!,
       );
     } catch (e) {
       _errorLog('Error while handling request: $e');
-      return _res.send(
+      return _res!.send(
           jsonEncode(
             {
               'message': 'Internal server error',
@@ -287,6 +287,7 @@ class Appwrouter {
     final log = context.log;
     final error = context.error;
     try {
+      _clean();
       _client = Client();
       _req = req;
       _res = res;
@@ -327,7 +328,7 @@ class Appwrouter {
           req,
           res,
           middlewarePayload,
-          _client,
+          _client!,
           _redirect,
           _next,
         );
@@ -385,6 +386,14 @@ This error occured because you did not get the Response object from `AppwrouterR
         );
       }
     }
+  }
+
+  void _clean() {
+    _client = null;
+    _req = null;
+    _res = null;
+    _log = null;
+    _errorLog = null;
   }
 
   Future<dynamic> _redirect(String path) async {
