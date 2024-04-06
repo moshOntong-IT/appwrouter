@@ -183,7 +183,8 @@ class Appwrouter {
 
         if (isMatch) {
           final handler = value.methods[method];
-
+          final newReq = _req!.copyWith(params: params);
+          _req = newReq;
           if (handler != null) {
             return RouteMatchHandler(
               path: path,
@@ -230,11 +231,8 @@ class Appwrouter {
     _log('Matched route: ${_req!.path} with method ${_req!.method}');
 
     try {
-      final newReq = _req!.copyWith(params: routeMatch.params);
-      _req = newReq;
-
       return await routeMatch.handler!(
-        req: newReq,
+        req: _req!,
         res: _res!,
         log: _log,
         error: _errorLog,
@@ -313,7 +311,7 @@ class Appwrouter {
           eventType: eventType,
           eventMap: eventMap,
         );
-
+        log(req.params);
         final onMiddlewareResponse = onMiddleware(
           _req!,
           _res!,
