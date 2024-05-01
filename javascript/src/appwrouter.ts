@@ -249,7 +249,7 @@ class Appwrouter {
     } catch (e: unknown) {
       if (e instanceof AppwrouterException) {
         if (!onError) {
-          error(e.message);
+          this.errorLog(e.message);
           return res.send(
             JSON.stringify({
               message: e.message,
@@ -263,8 +263,8 @@ class Appwrouter {
           return onError({
             req,
             res,
-            error,
-            errorLog: e,
+            error: e,
+            errorLog: this.errorLog,
           });
         }
       } else {
@@ -283,8 +283,11 @@ class Appwrouter {
           return onError({
             req,
             res,
-            error,
-            errorLog: e,
+            error: new AppwrouterException(
+              e instanceof Error ? e.message : "An error occurred",
+              500
+            ),
+            errorLog: this.errorLog,
           });
         }
       }
