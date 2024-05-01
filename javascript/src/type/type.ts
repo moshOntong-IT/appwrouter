@@ -1,4 +1,5 @@
 import { Client } from "node-appwrite";
+import { AppwrouterException } from "./appwrouter_exception";
 
 export type TriggeredType = "event" | "http" | "schedule ";
 export type MethodType = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -19,7 +20,7 @@ export interface OnError {
   req: AppwrouterRequest;
   res: AppwrouterResponse;
   errorLog: any;
-  error: AppwrouterResponse;
+  error: AppwrouterException;
 }
 
 export interface MiddlewarePayload {
