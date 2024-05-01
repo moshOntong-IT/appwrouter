@@ -10,3 +10,5 @@ class AppwrouterException extends Error {
     Object.setPrototypeOf(this, AppwrouterException.prototype);
   }
 }
+
+export { AppwrouterException };

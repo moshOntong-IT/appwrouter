@@ -13,8 +13,11 @@ import {
   MethodType,
   EventType,
 } from "./type/type";
+
+import { AppwrouterException } from "./type/appwrouter_exception";
 export {
   redirect,
+  AppwrouterException,
   Appwrouter,
   RouteHandler,
   OnMiddleware,

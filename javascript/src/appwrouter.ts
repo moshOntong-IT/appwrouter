@@ -16,6 +16,7 @@ import {
 } from "./type/type";
 
 import { eventTypeParse, getSpecificEventType } from "./type/util";
+import { AppwrouterException } from "./type/appwrouter_exception";
 
 class Appwrouter {
   private versions: { [version: version]: VersionedRoutes };
