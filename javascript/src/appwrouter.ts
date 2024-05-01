@@ -283,10 +283,7 @@ class Appwrouter {
           return onError({
             req,
             res,
-            error: new AppwrouterException(
-              e instanceof Error ? e.message : "An error occurred",
-              500
-            ),
+            error: new AppwrouterException(JSON.stringify(e), 500),
             errorLog: this.errorLog,
           });
         }
