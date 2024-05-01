@@ -1,6 +1,6 @@
 {
   "name": "appwrouter",
-  "version": "0.1.3-rc.2",
+  "version": "0.1.5-rc.1",
   "main": "dist/index.js",
   "module": "./dist/index.mjs",
   "types": "dist/index.d.ts",

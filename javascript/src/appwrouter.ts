@@ -21,6 +21,8 @@ import { AppwrouterException } from "./type/appwrouter_exception";
 class Appwrouter {
   private versions: { [version: version]: VersionedRoutes };
   constructor() {
+    this.next = this.next.bind(this);
+    this.redirect = this.redirect.bind(this);
     this.versions = {};
   }
 
@@ -189,7 +191,6 @@ class Appwrouter {
     }
   }
 
-  // TODO kani nalang sunda lang ang initialize implemented sa dart version
   initialize = async ({
     context,
     onMiddleware,
@@ -209,8 +210,8 @@ class Appwrouter {
       this.errorLog = error;
 
       log("Initializing Appwrouter...");
-      let routeMatch = this.matchRoute();
 
+      let routeMatch = this.matchRoute();
       if (!onMiddleware) {
         return this.handleRequest({ routeMatch });
       } else {
@@ -235,8 +236,8 @@ class Appwrouter {
         };
 
         const onMiddleWareResponse = onMiddleware({
-          req,
-          res,
+          req: this.req!,
+          res: this.res!,
           payload: middlewarePayload,
           log,
           error: this.errorLog,
@@ -261,8 +262,8 @@ class Appwrouter {
           );
         } else {
           return onError({
-            req,
-            res,
+            req: this.req!,
+            res: this.res!,
             error: e,
             errorLog: this.errorLog,
           });
@@ -281,8 +282,8 @@ class Appwrouter {
           );
         } else {
           return onError({
-            req,
-            res,
+            req: this.req!,
+            res: this.res!,
             error: new AppwrouterException(JSON.stringify(e), 500),
             errorLog: this.errorLog,
           });
@@ -326,12 +327,12 @@ class Appwrouter {
 
   private redirect(path: string) {
     this.req = { ...this.req!, path };
-    const routeMatch = this.matchRoute();
+    let routeMatch = this.matchRoute();
     return this.handleRequest({ routeMatch });
   }
 
   private next() {
-    const routeMatch = this.matchRoute();
+    let routeMatch = this.matchRoute();
     return this.handleRequest({ routeMatch });
   }
 }

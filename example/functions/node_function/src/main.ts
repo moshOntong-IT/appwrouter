@@ -16,14 +16,16 @@ export default async (context: any) => {
   return router.initialize({
     context,
     onMiddleware: async ({ req, res, log, error, redirect, next }) => {
-      let studentId = req.params.studentId;
-      let passwordQuery = req.query.password;
+      let studentId = req.params["studentId"];
+      let passwordQuery = req.query["password"];
 
+      log(JSON.stringify(req.params));
       if (studentId === "123" && passwordQuery === "password") {
         return redirect("/v1/index");
       } else {
         return next();
       }
+      // return next();
     },
 
     onError: ({ req, res, errorLog, error }) => {
@@ -31,7 +33,7 @@ export default async (context: any) => {
 
       return res.send(
         JSON.stringify({
-          message: "An error occurred",
+          message: error.message,
         }),
         500,
         {
