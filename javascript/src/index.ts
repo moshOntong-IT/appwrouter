@@ -13,7 +13,6 @@ import {
   MethodType,
   EventType,
 } from "./type/type";
-import { initialize } from "./initialize";
 export {
   redirect,
   Appwrouter,
@@ -23,7 +22,6 @@ export {
   TriggeredType,
   MethodType,
   EventType,
-  initialize,
   Route,
   VersionedRoutes,
   HandleRequestType,

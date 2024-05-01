@@ -10,10 +10,12 @@ export type HandleRequestType = {
   client: Client;
 };
 
-export type MatchRouteType = {
+export type RouteMatchHandler = {
   version: string;
   method: MethodType;
   path: string;
+  params: Record<string, any>;
+  handler?: RouteHandler;
 };
 
 export type RouteHandler = (handler: HandleRequestType) => Promise<any>;
