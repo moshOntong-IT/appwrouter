@@ -285,8 +285,8 @@ class Appwrouter {
       _errorLog = error;
 
       _log('Initializing appwrouter...');
-      final routeMatch = _matchRoute();
       if (onMiddleware == null) {
+        final routeMatch = _matchRoute();
         return await _handleRequest(
           routeMatch: routeMatch,
         );
@@ -386,15 +386,23 @@ This error occured because you did not get the Response object from `AppwrouterR
   }
 
   Future<dynamic> _redirect(String path) async {
-    _req = _req!.copyWith(
-      path: path,
-    );
-    final routeMatch = _matchRoute();
-    return _handleRequest(routeMatch: routeMatch);
+    try {
+      _req = _req!.copyWith(
+        path: path,
+      );
+      final routeMatch = _matchRoute();
+      return _handleRequest(routeMatch: routeMatch);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<dynamic> _next() async {
-    final routeMatch = _matchRoute();
-    return _handleRequest(routeMatch: routeMatch);
+    try {
+      final routeMatch = _matchRoute();
+      return _handleRequest(routeMatch: routeMatch);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

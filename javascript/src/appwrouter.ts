@@ -211,8 +211,8 @@ class Appwrouter {
 
       log("Initializing Appwrouter...");
 
-      let routeMatch = this.matchRoute();
       if (!onMiddleware) {
+        let routeMatch = this.matchRoute();
         return this.handleRequest({ routeMatch });
       } else {
         const triggeredType: TriggeredType = req.headers["x-appwrite-trigger"];
@@ -326,14 +326,24 @@ class Appwrouter {
   }
 
   private redirect(path: string) {
-    this.req = { ...this.req!, path };
-    let routeMatch = this.matchRoute();
-    return this.handleRequest({ routeMatch });
+    try {
+      this.req = { ...this.req!, path };
+      let routeMatch = this.matchRoute();
+      return this.handleRequest({ routeMatch });
+    } catch (e) {
+      // rethrow error
+      throw e;
+    }
   }
 
   private next() {
-    let routeMatch = this.matchRoute();
-    return this.handleRequest({ routeMatch });
+    try {
+      let routeMatch = this.matchRoute();
+      return this.handleRequest({ routeMatch });
+    } catch (e) {
+      // rethrow error
+      throw e;
+    }
   }
 }
 
